@@ -1,0 +1,118 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+                xmlns:tools="http://schemas.android.com/tools"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                tools:context=".MainActivity"
+                android:background="@drawable/bg">
+
+
+        <ImageView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="@drawable/bg"/>
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerHorizontal="true"
+            android:layout_marginTop="36px"
+            android:orientation="vertical"
+            android:gravity="center">
+
+            <TextView
+                android:id="@+id/text"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Frosen Creek"
+                android:textColor="#FFFFFF"
+                android:textSize="16sp"/>
+            <View
+                android:layout_width="50px"
+                android:layout_height="1px"
+                android:background="#FFFFFF"/>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Circa Survive"
+                android:textColor="#FFFFFF"
+                android:textSize="12sp"/>
+
+        </LinearLayout>
+
+        <RelativeLayout
+            android:layout_marginTop="8dp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerInParent="true"
+            android:gravity="center">
+
+            <LinearLayout
+                android:paddingTop="8dp"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerInParent="true"
+                android:paddingBottom="21px"
+                android:paddingLeft="4dp">
+
+                <ImageView
+                    android:id="@+id/prev"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginRight="38px"
+                    android:src="@drawable/back_b"
+                    />
+
+                <ImageView
+                    android:id="@+id/next"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="38px"
+                    android:src="@drawable/forward"
+                    />
+            </LinearLayout>
+
+            <LinearLayout
+
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerInParent="true">
+                <ImageView
+                    android:paddingTop="8dp"
+                    android:paddingLeft="4dp"
+                    android:id="@+id/play"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:src="@drawable/play_btn"
+
+
+                    />
+            </LinearLayout>
+
+
+        </RelativeLayout>
+    <com.kit.chisw.walkmancontrol.ui.views.RoundProgressView
+        android:layout_width="320px"
+        android:layout_height="320px"/>
+
+        <com.kit.chisw.walkmancontrol.ui.views.RoundSpinnerView
+            android:id="@+id/volume"
+            android:layout_width="320px"
+            android:layout_height="320px"/>
+
+        <ImageView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@drawable/volume_icon"
+            android:layout_centerHorizontal="true"
+            android:layout_marginTop="230px"/>
+
+
+
+
+    <!--<TextView-->
+    <!--android:id="@+id/text"-->
+    <!--android:layout_width="match_parent"-->
+    <!--android:layout_height="wrap_content"/>-->
+
+</RelativeLayout>
