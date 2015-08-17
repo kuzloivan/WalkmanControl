@@ -20,9 +20,6 @@ import com.kit.chisw.walkmancontrol.model.TrackSkippedModel;
 import com.kit.chisw.walkmancontrol.model.TrackStartedModel;
 import com.kit.chisw.walkmancontrol.ui.views.RoundSpinnerView;
 
-import org.json.JSONException;
-import org.json.JSONObject;
-
 import java.io.Serializable;
 
 public class MainActivity extends GenericWatchActivity {
@@ -51,7 +48,7 @@ public class MainActivity extends GenericWatchActivity {
     private ImageView mPrev;
     private ImageView mNext;
 
-    RoundSpinnerView roundSpinnerView;
+    private  RoundSpinnerView roundSpinnerView;
 
     private ApiMessageManager mApiMessageManager;
 
