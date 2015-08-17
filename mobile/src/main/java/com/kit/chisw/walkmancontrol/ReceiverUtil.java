@@ -2,8 +2,22 @@ package com.kit.chisw.walkmancontrol;
 
 import android.content.Intent;
 
+import com.kit.chisw.walkmancontrol.model.TrackCompletedModel;
+import com.kit.chisw.walkmancontrol.model.TrackPausedModel;
+import com.kit.chisw.walkmancontrol.model.TrackPreparedModel;
+import com.kit.chisw.walkmancontrol.model.TrackSkippedModel;
+import com.kit.chisw.walkmancontrol.model.TrackStartedModel;
+
 import org.json.JSONException;
 import org.json.JSONObject;
+
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutput;
+import java.io.ObjectOutputStream;
+import java.io.Serializable;
 
 /**
  * Created by Kuzlo on 08.07.2015.
@@ -30,16 +44,15 @@ public class ReceiverUtil {
     private static final String TYPE_PLAYBACK_ERROR = "PLAYBACK_ERROR";
 
 
-    public static JSONObject parseWalkmanIntent(Intent intent) {
-        JSONObject jsonObject = new JSONObject();
+    public static byte[] parseWalkmanIntent(Intent intent) {
 
         switch (intent.getAction()) {
-            case "com.sonyericsson.music.TRACK_COMPLETED": return parseTrackCompleted(intent);
-            case "com.sonyericsson.music.TRACK_PREPARED": return parsePrepared(intent);
-            case "com.sonyericsson.music.playbackcontrol.ACTION_TRACK_STARTED": return parseTrackStarted(intent);
-            case "com.sonyericsson.music.playbackcontrol.ACTION_PAUSED": return parseTrackPaused(intent);
-            case "com.sonyericsson.music.playbackcontrol.ACTION_SKIPPED": return parseSkipped(intent);
-            case "com.sonyericsson.music.PLAYBACK_ERROR": return parsePlayBackError(intent);
+            case "com.sonyericsson.music.TRACK_COMPLETED": return serialize(new TrackCompletedModel(intent));
+            case "com.sonyericsson.music.TRACK_PREPARED": return serialize(new TrackPreparedModel(intent));
+            case "com.sonyericsson.music.playbackcontrol.ACTION_TRACK_STARTED": return serialize(new TrackStartedModel(intent));
+            case "com.sonyericsson.music.playbackcontrol.ACTION_PAUSED": return serialize(new TrackPausedModel(intent));
+            case "com.sonyericsson.music.playbackcontrol.ACTION_SKIPPED": return serialize(new TrackSkippedModel(intent));
+//            case "com.sonyericsson.music.PLAYBACK_ERROR": return parsePlayBackError(intent).toString().getBytes();
 
         }
         return null;
@@ -120,4 +133,31 @@ public class ReceiverUtil {
         }
         return track;
     }
+
+    public static byte[] serialize(Object obj) {
+        ByteArrayOutputStream b = new ByteArrayOutputStream();
+        ObjectOutputStream o = null;
+        try {
+            o = new ObjectOutputStream(b);
+            o.writeObject(obj);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return b.toByteArray();
+    }
+
+    public static Object deserialize(byte[] bytes) {
+        ByteArrayInputStream b = new ByteArrayInputStream(bytes);
+        ObjectInputStream o;
+        try {
+            o = new ObjectInputStream(b);
+            return o.readObject();
+        } catch (IOException e) {
+            e.printStackTrace();
+        } catch (ClassNotFoundException e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+
 }

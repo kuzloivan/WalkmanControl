@@ -13,7 +13,7 @@ public class MusicReceiver extends BroadcastReceiver {
     private GoogleApiClient googleApiClient;
     @Override
     public void onReceive(Context context, final Intent intent) {
-        new WearConnectManager(context,"TRACK",ReceiverUtil.parseWalkmanIntent(intent).toString()).send();
+        new WearConnectManager(context, "TRACK", ReceiverUtil.parseWalkmanIntent(intent)).send();
     }
 
 

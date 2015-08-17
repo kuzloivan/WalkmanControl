@@ -12,10 +12,18 @@ import com.google.android.gms.wearable.MessageApi;
 import com.google.android.gms.wearable.MessageEvent;
 import com.kit.chisw.walkmancontrol.ApiMessageManager;
 import com.kit.chisw.walkmancontrol.R;
+import com.kit.chisw.walkmancontrol.ReceiverUtil;
+import com.kit.chisw.walkmancontrol.model.TrackCompletedModel;
+import com.kit.chisw.walkmancontrol.model.TrackPausedModel;
+import com.kit.chisw.walkmancontrol.model.TrackPreparedModel;
+import com.kit.chisw.walkmancontrol.model.TrackSkippedModel;
+import com.kit.chisw.walkmancontrol.model.TrackStartedModel;
 import com.kit.chisw.walkmancontrol.ui.views.RoundSpinnerView;
 
 import org.json.JSONException;
 import org.json.JSONObject;
+
+import java.io.Serializable;
 
 public class MainActivity extends GenericWatchActivity {
 
@@ -75,10 +83,10 @@ public class MainActivity extends GenericWatchActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        if(getPackageManager().hasSystemFeature(PackageManager.FEATURE_LOCATION_GPS)){
-            Log.d("GPS","true");
-        }else {
-            Log.d("GPS","false");
+        if (getPackageManager().hasSystemFeature(PackageManager.FEATURE_LOCATION_GPS)) {
+            Log.d("GPS", "true");
+        } else {
+            Log.d("GPS", "false");
         }
         mApiMessageManager = new ApiMessageManager(getApplicationContext());
         mApiMessageManager.setMessageListener(new MessageListener());
@@ -122,47 +130,40 @@ public class MainActivity extends GenericWatchActivity {
 
         @Override
         public void onMessageReceived(MessageEvent pMessageEvent) {
-            JSONObject track = new JSONObject();
-            String s = new String(pMessageEvent.getData());
-            Log.d("oooo", s);
 
-            try {
-                track = new JSONObject(s);
-            } catch (JSONException e) {
-                e.printStackTrace();
-               roundSpinnerView.setAngle(2.7*Integer.parseInt(s));
-                return;
-            }
-            Log.d("oooof", track.optString(EVENT_TYPE));
-
-            String text = "";
+            byte[] data = pMessageEvent.getData();
+            Serializable model = (Serializable) ReceiverUtil.deserialize(data);
             int icon = android.R.drawable.ic_media_play;
-            switch (track.optString(EVENT_TYPE)) {
-                case TYPE_TRACK_COMPLETED:
-                    text = track.optString(ARTIST_NAME) + " - " + track.optString(TRACK_NAME);
-                    icon = android.R.drawable.ic_media_play;
-                    break;
-                case TYPE_TRACK_PREPARED:
-                    text = track.optString(ARTIST_NAME) + " - " + track.optString(TRACK_NAME);
-                    icon = android.R.drawable.ic_media_play;
-                    break;
-                case TYPE_ACTION_TRACK_STARTED:
-                    text = track.optString(ARTIST_NAME) + " - " + track.optString(TRACK_NAME);
-                    icon = android.R.drawable.ic_media_pause;
-                    break;
-                case TYPE_ACTION_PAUSED:
-                    text = track.optString(ARTIST_NAME) + " - " + track.optString(TRACK_NAME);
-                    icon = android.R.drawable.ic_media_play;
-                    break;
-                case TYPE_ACTION_SKIPPED:
-                    text = track.optString(ARTIST_NAME) + " - " + track.optString(TRACK_NAME);
-                    icon = android.R.drawable.ic_media_play;
-                    break;
-                case TYPE_PLAYBACK_ERROR:
-                    break;
+            String text = "";
+
+            if (model instanceof TrackCompletedModel) {
+                text = ((TrackCompletedModel) model).getArtistName() + " - " + ((TrackCompletedModel) model).getTrackName();
+                icon = android.R.drawable.ic_media_play;
+                Log.d("oooof", "type " + TrackCompletedModel.class.getName());
+
+            } else if (model instanceof TrackPausedModel) {
+                text = ((TrackPausedModel) model).getArtistName() + " - " + ((TrackPausedModel) model).getTrackName();
+                icon = android.R.drawable.ic_media_play;
+                Log.d("oooof", "type " + TrackPausedModel.class.getName());
+
+            } else if (model instanceof TrackPreparedModel) {
+                text = ((TrackPreparedModel) model).getArtistName() + " - " + ((TrackPreparedModel) model).getTrackName();
+                icon = android.R.drawable.ic_media_play;
+                Log.d("oooof", "type " + TrackPreparedModel.class.getName());
+
+            } else if (model instanceof TrackSkippedModel) {
+                text = ((TrackSkippedModel) model).getArtistName() + " - " + ((TrackSkippedModel) model).getTrackName();
+                icon = android.R.drawable.ic_media_play;
+                Log.d("oooof", "type " + TrackSkippedModel.class.getName());
+
+            } else if (model instanceof TrackStartedModel) {
+                text = ((TrackStartedModel) model).getArtistName() + " - " + ((TrackStartedModel) model).getTrackName();
+                icon = android.R.drawable.ic_media_pause;
+                Log.d("oooof", "type " + TrackStartedModel.class.getName());
+
             }
+
             final String finalText = text;
-            Log.d("oooof", track.optString(ARTIST_NAME));
             final int finalIcon = icon;
             runOnUiThread(new Runnable() {
                 @Override

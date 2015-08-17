@@ -17,9 +17,9 @@ public class WearConnectManager {
 
     private GoogleApiClient googleApiClient;
     private String action;
-    private String data;
+    private byte[] data;
 
-    public WearConnectManager(Context context, String pAction, String pData) {
+    public WearConnectManager(Context context, String pAction, byte[] pData) {
         googleApiClient = new GoogleApiClient.Builder(context)
                 .addConnectionCallbacks(new ConnectionListener())
                 .addApi(Wearable.API)
@@ -46,7 +46,7 @@ public class WearConnectManager {
                             continue;
                         }
                         Wearable.MessageApi.sendMessage(
-                                googleApiClient, f.getId(), action, data.getBytes()).await();
+                                googleApiClient, f.getId(), action, data).await();
 
 
                     }
