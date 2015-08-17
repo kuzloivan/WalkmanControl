@@ -18,9 +18,8 @@ import com.kit.chisw.walkmancontrol.model.TrackPausedModel;
 import com.kit.chisw.walkmancontrol.model.TrackPreparedModel;
 import com.kit.chisw.walkmancontrol.model.TrackSkippedModel;
 import com.kit.chisw.walkmancontrol.model.TrackStartedModel;
+import com.kit.chisw.walkmancontrol.ui.views.RoundProgressView;
 import com.kit.chisw.walkmancontrol.ui.views.RoundSpinnerView;
-
-import java.io.Serializable;
 
 public class MainActivity extends GenericWatchActivity {
 
@@ -49,6 +48,7 @@ public class MainActivity extends GenericWatchActivity {
     private ImageView mNext;
 
     private  RoundSpinnerView roundSpinnerView;
+    private RoundProgressView mRoundProgressView;
 
     private ApiMessageManager mApiMessageManager;
 
@@ -74,6 +74,8 @@ public class MainActivity extends GenericWatchActivity {
         mNext.setOnClickListener(clicker);
         roundSpinnerView = (RoundSpinnerView) stub.findViewById(R.id.volume);
         roundSpinnerView.setProgressListener(new ProgressListener());
+
+        mRoundProgressView = (RoundProgressView) findViewById(R.id.progress);
     }
 
     @Override
@@ -129,7 +131,7 @@ public class MainActivity extends GenericWatchActivity {
         public void onMessageReceived(MessageEvent pMessageEvent) {
 
             byte[] data = pMessageEvent.getData();
-            Serializable model = (Serializable) ReceiverUtil.deserialize(data);
+            Object model = ReceiverUtil.deserialize(data);
             int icon = android.R.drawable.ic_media_play;
             String text = "";
 
@@ -156,6 +158,8 @@ public class MainActivity extends GenericWatchActivity {
             } else if (model instanceof TrackStartedModel) {
                 text = ((TrackStartedModel) model).getArtistName() + " - " + ((TrackStartedModel) model).getTrackName();
                 icon = android.R.drawable.ic_media_pause;
+                mRoundProgressView.setMaxTime(((TrackStartedModel) model).getTrackDuration());
+                mRoundProgressView.start(0);
                 Log.d("oooof", "type " + TrackStartedModel.class.getName());
 
             }

@@ -12,6 +12,7 @@
             android:background="@drawable/bg"/>
 
     <com.kit.chisw.walkmancontrol.ui.views.RoundProgressView
+        android:id="@+id/progress"
         android:layout_width="320px"
         android:layout_height="320px"/>
 

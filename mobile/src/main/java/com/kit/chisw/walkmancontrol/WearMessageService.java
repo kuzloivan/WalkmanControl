@@ -33,10 +33,10 @@ public class WearMessageService extends WearableListenerService {
             case "pause":mediaKeyPress(KeyEvent.KEYCODE_MEDIA_PAUSE); break;
             case "play_pouse":mediaKeyPress(KeyEvent.KEYCODE_MEDIA_PLAY_PAUSE); break;
             case "get_volume":
-                AudioManager am2 =
-                        (AudioManager) getSystemService(Context.AUDIO_SERVICE);
-
-                new WearConnectManager(this,"MEDIA",(int)(((float)am2.getStreamVolume(AudioManager.STREAM_MUSIC)/(float)am2.getStreamMaxVolume(AudioManager.STREAM_MUSIC))*100) +  "").send();
+//                AudioManager am2 =
+//                        (AudioManager) getSystemService(Context.AUDIO_SERVICE);
+//
+//                new WearConnectManager(this,"MEDIA",(int)(((float)am2.getStreamVolume(AudioManager.STREAM_MUSIC)/(float)am2.getStreamMaxVolume(AudioManager.STREAM_MUSIC))*100) +  "").send();
                 break;
             default:
                 int p = Integer.parseInt(s.split(" ")[1]);
