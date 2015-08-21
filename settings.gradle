@@ -1,1 +1,1 @@
-include ':mobile', ':wear', ':wear_connect_lib'
+include ':wear_connect_lib', ':mobile', ':wear'

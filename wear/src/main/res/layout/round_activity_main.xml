@@ -2,15 +2,20 @@
                 xmlns:tools="http://schemas.android.com/tools"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                tools:context=".MainActivity"
-                android:background="@drawable/bg">
+                android:background="@drawable/bg"
+                tools:context=".MainActivity">
 
 
-        <ImageView
-            android:id="@+id/bg"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:background="@drawable/bg"/>
+    <ImageView
+        android:id="@+id/bg"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@drawable/bg"/>
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="#77000000"/>
 
     <com.kit.chisw.walkmancontrol.ui.views.RoundProgressView
         android:id="@+id/progress"
@@ -22,95 +27,105 @@
         android:layout_width="320px"
         android:layout_height="320px"/>
 
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="36px"
+        android:gravity="center"
+        android:orientation="vertical">
+
+        <TextView
+            android:id="@+id/artist"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginRight="5dp"
+            android:singleLine="true"
+            tools:text="Frosen CreekFrosen CreekFrosen Creek"
+            android:textColor="#FFFFFF"
+            android:textSize="16sp"/>
+
+        <View
+            android:layout_width="50px"
+            android:layout_height="1px"
+            android:background="#FFFFFF"/>
+
+        <TextView
+            android:id="@+id/track"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:ellipsize="marquee"
+            android:singleLine="true"
+            tools:text="Circa Survive"
+            android:textColor="#FFFFFF"
+            android:textSize="12sp"
+            />
+
+    </LinearLayout>
+
+    <RelativeLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerInParent="true"
+        android:layout_marginTop="8dp"
+        android:gravity="center">
+
         <LinearLayout
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_centerHorizontal="true"
-            android:layout_marginTop="36px"
-            android:orientation="vertical"
-            android:gravity="center">
+            android:layout_centerInParent="true"
+            android:paddingBottom="21px"
+            android:paddingLeft="4dp"
+            android:paddingTop="8dp">
 
-            <TextView
-                android:id="@+id/track"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Frosen Creek"
-                android:textColor="#FFFFFF"
-                android:textSize="16sp"/>
-            <View
-                android:layout_width="50px"
-                android:layout_height="1px"
-                android:background="#FFFFFF"/>
+            <ImageView
+                android:id="@+id/prev"
+                android:layout_width="@dimen/pn_button_size"
+                android:layout_height="@dimen/pn_button_size"
+                android:src="@drawable/selector_prev"
+                />
 
-            <TextView
-                android:id="@+id/artist"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Circa Survive"
-                android:textColor="#FFFFFF"
-                android:textSize="12sp"/>
-
+            <ImageView
+                android:id="@+id/next"
+                android:layout_width="@dimen/pn_button_size"
+                android:layout_height="@dimen/pn_button_size"
+                android:src="@drawable/selector_next"
+                />
         </LinearLayout>
 
-        <RelativeLayout
-            android:layout_marginTop="8dp"
+        <LinearLayout
+
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_centerInParent="true"
-            android:gravity="center">
+            android:layout_centerInParent="true">
 
-            <LinearLayout
-                android:paddingTop="8dp"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_centerInParent="true"
-                android:paddingBottom="21px"
-                android:paddingLeft="4dp">
-
-                <ImageView
-                    android:id="@+id/prev"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:src="@drawable/selector_prev"
-                    />
-
-                <ImageView
-                    android:id="@+id/next"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:src="@drawable/selector_next"
-                    />
-            </LinearLayout>
-
-            <LinearLayout
-
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_centerInParent="true">
-                <ImageView
-                    android:id="@+id/play"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:src="@drawable/selector_play"
+            <ImageView
+                android:id="@+id/play"
+                android:layout_width="100dp"
+                android:layout_height="100dp"
+                android:src="@drawable/selector_play"
 
 
-                    />
-            </LinearLayout>
+                />
+        </LinearLayout>
 
 
-        </RelativeLayout>
+    </RelativeLayout>
 
 
-        <ImageView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:src="@drawable/volume_icon"
-            android:layout_centerHorizontal="true"
-            android:layout_marginTop="230px"/>
+    <ImageView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="240px"
+        android:src="@drawable/volume_icon"/>
 
 
-
-
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="30px"
+        android:layout_alignParentBottom="true"
+        android:background="#000000"></View>
     <!--<TextView-->
     <!--android:id="@+id/text"-->
     <!--android:layout_width="match_parent"-->

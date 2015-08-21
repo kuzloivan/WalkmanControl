@@ -33,7 +33,7 @@ public class RoundSpinnerView extends View {
     @Override
     protected void onDraw(Canvas canvas) {
         super.onDraw(canvas);
-        drawArc(canvas, 30);
+        drawArc(canvas, 40);
     }
 
     private void drawArc(Canvas pCanvas, int offset) {
