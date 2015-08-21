@@ -1,14 +1,27 @@
-package com.kit.chisw.walkmancontrol;
-
+package util;
 
 import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
 
 /**
- * Created by Kuzlo on 08.07.2015.
+ * Created by Kuzlo on 20.08.2015.
  */
-public class ReceiverUtil {
+public class SerialiserUtil {
+
+    public static byte[] serialize(Object obj) {
+        ByteArrayOutputStream b = new ByteArrayOutputStream();
+        ObjectOutputStream o = null;
+        try {
+            o = new ObjectOutputStream(b);
+            o.writeObject(obj);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return b.toByteArray();
+    }
 
     public static Object deserialize(byte[] bytes) {
         ByteArrayInputStream b = new ByteArrayInputStream(bytes);
@@ -23,5 +36,4 @@ public class ReceiverUtil {
         }
         return null;
     }
-
 }

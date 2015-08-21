@@ -51,21 +51,24 @@ public class RoundProgressView extends View {
         RectF mRectF2 = new RectF(offset, offset, pCanvas.getWidth() - offset, pCanvas.getHeight() - offset);
         pCanvas.drawArc(mRectF2, -210, (float) (((float)currentTime/(float)maxTime)*(float)100*2.4), false, paint3);
     }
-    public void setAngle(double angle) {
+
+    public void setPosition(int time) {
+        currentTime = time;
         invalidate();
     }
 
-    public void setMaxTime(int pTime){
+    public void setDuration(int pTime){
         maxTime = pTime;
     }
 
-    public void start(int time){
-        currentTime = time;
+    public void start(){
         mHandler.post(mRunnable);
     }
 
-    public void pause(){
+    public void pause(int time){
+        currentTime = time;
         mHandler.removeCallbacks(mRunnable);
+        invalidate();
     }
 
 

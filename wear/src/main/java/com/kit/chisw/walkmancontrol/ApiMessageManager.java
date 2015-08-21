@@ -4,9 +4,11 @@ import android.content.Context;
 import android.util.Log;
 
 import com.google.android.gms.common.api.GoogleApiClient;
+import com.google.android.gms.wearable.DataApi;
 import com.google.android.gms.wearable.MessageApi;
 import com.google.android.gms.wearable.Node;
 import com.google.android.gms.wearable.Wearable;
+import com.kit.chisw.walkmancontrol.ui.activity.MainActivity;
 
 import java.util.List;
 import java.util.concurrent.Executor;
@@ -20,6 +22,10 @@ public class ApiMessageManager {
     private Executor mExecutor;
 
     private List<Node> mNodes;
+
+    public GoogleApiClient getGoogleApiClient() {
+        return mGoogleApiClient;
+    }
 
     public ApiMessageManager(Context pContext) {
         mGoogleApiClient = new GoogleApiClient.Builder(pContext).addApi(Wearable.API)
@@ -37,6 +43,10 @@ public class ApiMessageManager {
 
     public void send(final String text) {
         mExecutor.execute(new ApiCommand("Music", text));
+    }
+
+    public void addDataListener(DataApi.DataListener pDataListener) {
+        Wearable.DataApi.addListener(mGoogleApiClient,pDataListener);
     }
 
     private class ApiCommand implements Runnable {

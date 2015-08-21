@@ -1,4 +1,4 @@
-package com.kit.chisw.walkmancontrol;
+package com.kit.chisw.walkmancontrol.core;
 
 import android.content.Context;
 import android.content.Intent;
@@ -13,6 +13,13 @@ import com.google.android.gms.wearable.WearableListenerService;
  * Created by Kuzlo on 08.07.2015.
  */
 public class WearMessageService extends WearableListenerService {
+
+    @Override
+    public int onStartCommand(Intent intent, int flags, int startId) {
+              return super.onStartCommand(intent, flags, startId);
+
+    }
+
     @Override
     public void onMessageReceived(MessageEvent messageEvent) {
         String s = new String(messageEvent.getData());
@@ -25,7 +32,6 @@ public class WearMessageService extends WearableListenerService {
                 }else {
                     mediaKeyPress(KeyEvent.KEYCODE_MEDIA_PLAY);
                 }
-
                 break;
 
             case "prev":mediaKeyPress(KeyEvent.KEYCODE_MEDIA_PREVIOUS); break;

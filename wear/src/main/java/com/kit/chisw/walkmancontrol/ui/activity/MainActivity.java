@@ -1,56 +1,56 @@
 package com.kit.chisw.walkmancontrol.ui.activity;
 
-import android.content.pm.PackageManager;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.os.Bundle;
 import android.support.wearable.view.WatchViewStub;
 import android.util.Log;
 import android.view.View;
+import android.view.WindowManager;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.google.android.gms.common.ConnectionResult;
+import com.google.android.gms.wearable.Asset;
+import com.google.android.gms.wearable.DataApi;
+import com.google.android.gms.wearable.DataEvent;
+import com.google.android.gms.wearable.DataEventBuffer;
+import com.google.android.gms.wearable.DataMapItem;
 import com.google.android.gms.wearable.MessageApi;
 import com.google.android.gms.wearable.MessageEvent;
+import com.google.android.gms.wearable.Wearable;
 import com.kit.chisw.walkmancontrol.ApiMessageManager;
 import com.kit.chisw.walkmancontrol.R;
 import com.kit.chisw.walkmancontrol.ReceiverUtil;
-import com.kit.chisw.walkmancontrol.model.TrackCompletedModel;
-import com.kit.chisw.walkmancontrol.model.TrackPausedModel;
-import com.kit.chisw.walkmancontrol.model.TrackPreparedModel;
-import com.kit.chisw.walkmancontrol.model.TrackSkippedModel;
-import com.kit.chisw.walkmancontrol.model.TrackStartedModel;
 import com.kit.chisw.walkmancontrol.ui.views.RoundProgressView;
 import com.kit.chisw.walkmancontrol.ui.views.RoundSpinnerView;
+import com.kit.wear_connect_lib.model.TrackCompletedModel;
+import com.kit.wear_connect_lib.model.TrackPausedModel;
+import com.kit.wear_connect_lib.model.TrackPreparedModel;
+import com.kit.wear_connect_lib.model.TrackSkippedModel;
+import com.kit.wear_connect_lib.model.TrackStartedModel;
+import com.kit.wear_connect_lib.model.commands.VolumeCommand;
+
+import java.io.InputStream;
+import java.util.Objects;
+import java.util.concurrent.TimeUnit;
 
 public class MainActivity extends GenericWatchActivity {
 
-    private static final String ALBUM_ID = "ALBUM_ID";
-    private static final String ARTIST_ID = "ARTIST_ID";
-    private static final String TRACK_URI = "TRACK_URI";
-    private static final String ALBUM_NAME = "ALBUM_NAME";
-    private static final String ARTIST_NAME = "ARTIST_NAME";
-    private static final String TRACK_POSITION = "TRACK_POSITION";
-    private static final String TRACK_NAME = "TRACK_NAME";
-    private static final String TRACK_ID = "TRACK_ID";
-    private static final String IS_LOCAL = "IS_LOCAL";
-    private static final String TRACK_DURATION = "TRACK_DURATION";
-    private static final String EVENT_TYPE = "TYPE";
+    private TextView mTrackName;
+    private TextView mArtistName;
+    private ImageView mBg;
 
-    private static final String TYPE_TRACK_COMPLETED = "TRACK_COMPLETED";
-    private static final String TYPE_TRACK_PREPARED = "TRACK_PREPARED";
-    private static final String TYPE_ACTION_TRACK_STARTED = "ACTION_TRACK_STARTED";
-    private static final String TYPE_ACTION_PAUSED = "ACTION_PAUSED";
-    private static final String TYPE_ACTION_SKIPPED = "ACTION_SKIPPED";
-    private static final String TYPE_PLAYBACK_ERROR = "PLAYBACK_ERROR";
-
-    private TextView mTextView;
     private ImageView mPlay;
     private ImageView mPrev;
     private ImageView mNext;
 
-    private  RoundSpinnerView roundSpinnerView;
+    private RoundSpinnerView mVolume;
     private RoundProgressView mRoundProgressView;
 
     private ApiMessageManager mApiMessageManager;
+
+    private Object lastEvent;
 
 
     @Override
@@ -65,30 +65,27 @@ public class MainActivity extends GenericWatchActivity {
 
     private void initView(WatchViewStub stub) {
         Clicker clicker = new Clicker();
-        mTextView = (TextView) stub.findViewById(R.id.text);
+        mTrackName = (TextView) stub.findViewById(R.id.track);
+        mArtistName = (TextView) stub.findViewById(R.id.artist);
         mPlay = (ImageView) stub.findViewById(R.id.play);
         mPlay.setOnClickListener(clicker);
         mPrev = (ImageView) stub.findViewById(R.id.prev);
         mPrev.setOnClickListener(clicker);
         mNext = (ImageView) stub.findViewById(R.id.next);
         mNext.setOnClickListener(clicker);
-        roundSpinnerView = (RoundSpinnerView) stub.findViewById(R.id.volume);
-        roundSpinnerView.setProgressListener(new ProgressListener());
-
+        mVolume = (RoundSpinnerView) stub.findViewById(R.id.volume);
+        mVolume.setProgressListener(new ProgressListener());
         mRoundProgressView = (RoundProgressView) findViewById(R.id.progress);
+        mBg =  (ImageView) stub.findViewById(R.id.bg);
     }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
-        if (getPackageManager().hasSystemFeature(PackageManager.FEATURE_LOCATION_GPS)) {
-            Log.d("GPS", "true");
-        } else {
-            Log.d("GPS", "false");
-        }
         mApiMessageManager = new ApiMessageManager(getApplicationContext());
-        mApiMessageManager.setMessageListener(new MessageListener());
+        mApiMessageManager.setMessageListener(new MessageCallback());
+        mApiMessageManager.addDataListener(new DataListener());
+        getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
     }
 
     private class Clicker implements View.OnClickListener {
@@ -96,18 +93,18 @@ public class MainActivity extends GenericWatchActivity {
         @Override
         public void onClick(View v) {
             switch (v.getId()) {
-                case R.id.play:
-                    mApiMessageManager.send("play");
-                    mApiMessageManager.send("get_volume");
-                    break;
-                case R.id.prev:
-                    mApiMessageManager.send("prev");
-                    mApiMessageManager.send("get_volume");
-                    break;
-                case R.id.next:
-                    mApiMessageManager.send("next");
-                    mApiMessageManager.send("get_volume");
-                    break;
+//                case R.id.play:
+//                    mApiMessageManager.send("play");
+//                    mApiMessageManager.send("get_volume");
+//                    break;
+//                case R.id.prev:
+//                    mApiMessageManager.send("prev");
+//                    mApiMessageManager.send("get_volume");
+//                    break;
+//                case R.id.next:
+//                    mApiMessageManager.send("next");
+//                    mApiMessageManager.send("get_volume");
+//                    break;
             }
         }
     }
@@ -120,59 +117,142 @@ public class MainActivity extends GenericWatchActivity {
 
         @Override
         public void onChange(int progress) {
-
-
         }
+
+
     }
 
-    private class MessageListener implements MessageApi.MessageListener {
+    private class MessageCallback implements MessageApi.MessageListener {
+
+        MessageListener mMessageListener = new MessageListener();
 
         @Override
-        public void onMessageReceived(MessageEvent pMessageEvent) {
-
-            byte[] data = pMessageEvent.getData();
-            Object model = ReceiverUtil.deserialize(data);
-            int icon = android.R.drawable.ic_media_play;
-            String text = "";
-
-            if (model instanceof TrackCompletedModel) {
-                text = ((TrackCompletedModel) model).getArtistName() + " - " + ((TrackCompletedModel) model).getTrackName();
-                icon = android.R.drawable.ic_media_play;
-                Log.d("oooof", "type " + TrackCompletedModel.class.getName());
-
-            } else if (model instanceof TrackPausedModel) {
-                text = ((TrackPausedModel) model).getArtistName() + " - " + ((TrackPausedModel) model).getTrackName();
-                icon = android.R.drawable.ic_media_play;
-                Log.d("oooof", "type " + TrackPausedModel.class.getName());
-
-            } else if (model instanceof TrackPreparedModel) {
-                text = ((TrackPreparedModel) model).getArtistName() + " - " + ((TrackPreparedModel) model).getTrackName();
-                icon = android.R.drawable.ic_media_play;
-                Log.d("oooof", "type " + TrackPreparedModel.class.getName());
-
-            } else if (model instanceof TrackSkippedModel) {
-                text = ((TrackSkippedModel) model).getArtistName() + " - " + ((TrackSkippedModel) model).getTrackName();
-                icon = android.R.drawable.ic_media_play;
-                Log.d("oooof", "type " + TrackSkippedModel.class.getName());
-
-            } else if (model instanceof TrackStartedModel) {
-                text = ((TrackStartedModel) model).getArtistName() + " - " + ((TrackStartedModel) model).getTrackName();
-                icon = android.R.drawable.ic_media_pause;
-                mRoundProgressView.setMaxTime(((TrackStartedModel) model).getTrackDuration());
-                mRoundProgressView.start(0);
-                Log.d("oooof", "type " + TrackStartedModel.class.getName());
-
-            }
-
-            final String finalText = text;
-            final int finalIcon = icon;
+        public void onMessageReceived(final MessageEvent pMessageEvent) {
             runOnUiThread(new Runnable() {
                 @Override
                 public void run() {
-                    mTextView.setText(finalText);
-                    mPlay.setImageResource(finalIcon);
+                    mMessageListener.onMessageReceived(pMessageEvent);
                 }
             });
         }
+
+        private class MessageListener implements MessageApi.MessageListener {
+
+            @Override
+            public void onMessageReceived(MessageEvent pMessageEvent) {
+                byte[] data = pMessageEvent.getData();
+                Object model = ReceiverUtil.deserialize(data);
+                int icon = android.R.drawable.ic_media_play;
+                String track = "";
+                String artist = "";
+
+                if (model instanceof TrackCompletedModel) {
+                    TrackCompletedModel m = (TrackCompletedModel) model;
+                    track = m.getTrackName();
+                    artist = m.getArtistName();
+                    icon = R.drawable.selector_play;
+                    mRoundProgressView.pause(m.getTrackPosition());
+                    Log.d("oooof", "type " + TrackCompletedModel.class.getName());
+
+                } else if (model instanceof TrackPausedModel) {
+                    TrackPausedModel m = (TrackPausedModel) model;
+                    track = m.getTrackName();
+                    artist = m.getArtistName();
+                    icon = R.drawable.selector_play;
+                    mRoundProgressView.pause(m.getTrackPosition());
+                    Log.d("oooof", "type " + TrackPausedModel.class.getName());
+
+                } else if (model instanceof TrackPreparedModel) {
+                    TrackPreparedModel m = (TrackPreparedModel) model;
+                    track = m.getTrackName();
+                    artist = m.getArtistName();
+                    icon = R.drawable.selector_play;
+                    mRoundProgressView.pause(0);
+                    Log.d("oooof", "type " + TrackPreparedModel.class.getName());
+
+                } else if (model instanceof TrackSkippedModel) {
+                    TrackSkippedModel m = (TrackSkippedModel) model;
+                    track = m.getTrackName();
+                    artist = m.getArtistName();
+                    icon = R.drawable.selector_play;
+                    mRoundProgressView.pause(0);
+                    Log.d("oooof", "type " + TrackSkippedModel.class.getName());
+
+                } else if (model instanceof TrackStartedModel) {
+                    TrackStartedModel m = (TrackStartedModel) model;
+                    track = m.getTrackName();
+                    artist = m.getArtistName();
+                    icon = R.drawable.selector_pause;
+                    mRoundProgressView.setDuration(m.getTrackDuration());
+                    if (lastEvent != null && !(lastEvent instanceof TrackPausedModel)) {
+                        mRoundProgressView.setPosition(0);
+                    }
+                    mRoundProgressView.start();
+                    Log.d("oooof", "type " + TrackStartedModel.class.getName());
+                } else if (model instanceof VolumeCommand) {
+                    VolumeCommand m = (VolumeCommand) model;
+                    final int vol = m.getVolume();
+                    runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            mVolume.setAngle(vol);
+                        }
+                    });
+
+                    Log.d("oooof", "type " + VolumeCommand.class.getName());
+                    return;
+                }
+                lastEvent = model;
+
+                final int finalIcon = icon;
+                final String finalTrack = track;
+                final String finalArtist = artist;
+                mTrackName.setText(finalTrack);
+                mArtistName.setText(finalArtist);
+                mPlay.setImageResource(finalIcon);
+            }
+        }
     }
+
+
+    private class DataListener implements DataApi.DataListener {
+        @Override
+        public void onDataChanged(DataEventBuffer pDataEventBuffer) {
+            for (DataEvent event : pDataEventBuffer) {
+                if (event.getDataItem().getUri().getPath().equals("/image")) {
+                    DataMapItem dataMapItem = DataMapItem.fromDataItem(event.getDataItem());
+                    Asset profileAsset = dataMapItem.getDataMap().getAsset("profileImage");
+                    final Bitmap bitmap = loadBitmapFromAsset(profileAsset);
+                    runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            mBg.setImageBitmap(bitmap);
+                        }
+                    });
+
+                }
+            }
+        }
+
+        public Bitmap loadBitmapFromAsset(Asset asset) {
+            if (asset == null) {
+                throw new IllegalArgumentException("Asset must be non-null");
+            }
+            ConnectionResult result =
+                    mApiMessageManager.getGoogleApiClient().blockingConnect(5000, TimeUnit.MILLISECONDS);
+            if (!result.isSuccess()) {
+                return null;
+            }
+            // convert asset into a file descriptor and block until it's ready
+            InputStream assetInputStream = Wearable.DataApi.getFdForAsset(
+                    mApiMessageManager.getGoogleApiClient(), asset).await().getInputStream();
+
+            if (assetInputStream == null) {
+                return null;
+            }
+            // decode the stream into a bitmap
+            return BitmapFactory.decodeStream(assetInputStream);
+        }
+    }
+
 }

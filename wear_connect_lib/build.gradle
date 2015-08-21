@@ -1,11 +1,10 @@
-apply plugin: 'com.android.application'
+apply plugin: 'com.android.library'
 
 android {
     compileSdkVersion 22
     buildToolsVersion "23.0.0 rc2"
 
     defaultConfig {
-        applicationId "com.kit.chisw.walkmancontrol"
         minSdkVersion 15
         targetSdkVersion 22
         versionCode 1
@@ -20,9 +19,5 @@ android {
 }
 
 dependencies {
-    compile fileTree(include: ['*.jar'], dir: 'libs')
-    wearApp project(':wear')
-    compile 'com.android.support:appcompat-v7:22.2.0'
-    compile 'com.google.android.gms:play-services:7.5.0'
-    compile project(':wear_connect_lib')
+    compile fileTree(dir: 'libs', include: ['*.jar'])
 }
